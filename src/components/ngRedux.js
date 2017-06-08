@@ -3,11 +3,8 @@ import invariant from 'invariant';
 import {createStore, applyMiddleware, compose, combineReducers} from 'redux';
 import digestMiddleware from './digestMiddleware';
 
-import assign from 'lodash.assign';
 import curry from 'lodash.curry';
-import isArray from 'lodash.isarray';
 import isFunction from 'lodash.isfunction';
-import map from 'lodash.map';
 
 const typeIs = curry((type, val) => typeof val === type);
 const isObject = typeIs('object');
@@ -28,14 +25,14 @@ export default function ngReduxProvider() {
     );
 
     invariant(
-      !storeEnhancers || isArray(storeEnhancers),
+      !storeEnhancers || Array.isArray(storeEnhancers),
       'The storeEnhancers parameter passed to createStoreWith must be an Array. Instead received %s.',
       typeof storeEnhancers
     );
 
     _reducer = reducer;
     _reducerIsObject = isObject(reducer);
-    _storeEnhancers = storeEnhancers
+    _storeEnhancers = storeEnhancers || []
     _middlewares = middlewares || [];
     _initialState = initialState;
   };
@@ -45,22 +42,20 @@ export default function ngReduxProvider() {
       ? $injector.get(middleware)
       : middleware;
 
-    const resolvedMiddleware = map(_middlewares, resolveMiddleware);
+    const resolvedMiddleware = _middlewares.map(resolveMiddleware)
 
     const resolveStoreEnhancer = storeEnhancer => isString(storeEnhancer)
       ? $injector.get(storeEnhancer)
       : storeEnhancer;
 
-    const resolvedStoreEnhancer = map(_storeEnhancers, resolveStoreEnhancer);
+    const resolvedStoreEnhancer = _storeEnhancers.map(resolveStoreEnhancer);
 
     if(_reducerIsObject) {
       const getReducerKey = key => isString(_reducer[key])
         ? $injector.get(_reducer[key])
         : _reducer[key];
 
-      const resolveReducerKey = (result, key) => assign({}, result,
-        { [key]: getReducerKey(key) }
-      );
+      const resolveReducerKey = (result, key) => ({ ...result, [key]: getReducerKey(key) });
 
       const reducersObj = Object
         .keys(_reducer)
@@ -78,7 +73,7 @@ export default function ngReduxProvider() {
       ? applyMiddleware(...resolvedMiddleware)(finalCreateStore)(_reducer, _initialState)
       : applyMiddleware(...resolvedMiddleware)(finalCreateStore)(_reducer);
 
-    return assign({}, store, { connect: Connector(store) });
+    return { ...store, connect: Connector(store) };
   };
 
   this.$get.$inject = ['$injector'];

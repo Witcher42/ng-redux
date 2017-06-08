@@ -1,3 +1,7 @@
+# ng-redux-es3
+* *ES3 Compatible Angular bindings for [Redux](https://github.com/gaearon/redux).*
+* *More details see the original repository [ng-redux](https://github.com/angular-redux/ng-redux)*
+
 # ng-redux
 ###### Angular bindings for [Redux](https://github.com/gaearon/redux).
 
@@ -87,9 +91,9 @@ import * as CounterActions from '../actions/counter';
 
 class CounterController {
   constructor($ngRedux, $scope) {
-    /* ngRedux will merge the requested state's slice and actions onto this, 
+    /* ngRedux will merge the requested state's slice and actions onto this,
     you don't need to redefine them in your controller */
-    
+
     let unsubscribe = $ngRedux.connect(this.mapStateToThis, CounterActions)(this);
     $scope.$on('$destroy', unsubscribe);
   }
@@ -119,7 +123,7 @@ class CounterController {
 
 Creates the Redux store, and allow `connect()` to access it.
 
-#### Arguments: 
+#### Arguments:
 * `reducer` \(*Function*): A single reducer composed of all other reducers (create with redux.combineReducer)
 * [`middlewares`] \(*Function[]*): Optional, An array containing all the middleware that should be applied. Functions and strings are both valid members. String will be resolved via Angular, allowing you to use dependency injection in your middlewares.
 * [`storeEnhancers`] \(*Function[]*): Optional, this will be used to create the store, in most cases you don't need to pass anything, see [Store Enhancer official documentation.](http://rackt.github.io/redux/docs/Glossary.html#store-enhancer)
@@ -138,7 +142,7 @@ Connects an Angular component to Redux.
 * `target` \(*Object* or *Function*): If passed an object, the results of `mapStateToTarget` and `mapDispatchToTarget` will be merged onto it. If passed a function, the function will receive the results of `mapStateToTarget` and `mapDispatchToTarget` as parameters.
 
 e.g:
-```JS 
+```JS
 connect(this.mapState, this.mapDispatch)(this);
 //Or
 connect(this.mapState, this.mapDispatch)((selectedState, actions) => {/* ... */});
@@ -191,7 +195,7 @@ See [redux-ui-router](https://github.com/neilff/redux-ui-router) to make ng-redu
 See [ng-redux-router](https://github.com/amitport/ng-redux-router) to make ng-redux and angular-route work together.
 
 ## Using DevTools
-There are two options for using Redux DevTools with your angular app.  The first option is to use the [redux-devtools package] (https://www.npmjs.com/package/redux-devtools), 
+There are two options for using Redux DevTools with your angular app.  The first option is to use the [redux-devtools package] (https://www.npmjs.com/package/redux-devtools),
 and the other option is to use the [Redux DevTools Extension] (https://github.com/zalmoxisus/redux-devtools-extension#usage).  The Redux DevTools Extension does not
 require adding the react, react-redux, or redux-devtools packages to your project.
 
@@ -212,14 +216,14 @@ angular.module('app', ['ngRedux'])
       <App store={ $ngRedux }/>,
       document.getElementById('devTools')
     );
-    
+
     //To reflect state changes when disabling/enabling actions via the monitor
     //there is probably a smarter way to achieve that
     $ngRedux.subscribe(() => {
         $timeout(() => {$rootScope.$apply(() => {})}, 100);
     });
   });
-  
+
   class App extends Component {
   render() {
     return (
@@ -249,7 +253,7 @@ angular.module('app', ['ngRedux'])
   .config(($ngReduxProvider) => {
       $ngReduxProvider.createStoreWith(rootReducer, [thunk], [window.__REDUX_DEVTOOLS_EXTENSION__()]);
     })
-  .run(($ngRedux, $rootScope, $timeout) => { 
+  .run(($ngRedux, $rootScope, $timeout) => {
     //To reflect state changes when disabling/enabling actions via the monitor
     //there is probably a smarter way to achieve that
     $ngRedux.subscribe(() => {
